@@ -1,9 +1,22 @@
 import Intro from '@/components/Intro'
 import NavBar from '@/components/NavBar'
+import { useSession } from "next-auth/react"
 import Head from 'next/head'
+import { useEffect } from 'react'
+import Router from 'next/router'
 
 
 export default function Home() {
+
+  const { data: session } = useSession()
+
+  useEffect(() => {
+    if(session) {
+      Router.push('/frontend/Dashboard')
+    }
+  }, [session])
+
+
   return (
     <>
       <Head>
@@ -14,8 +27,6 @@ export default function Home() {
       </Head>
       <NavBar />
       <div className="w-full h-screen bg-gray-200  text-black">
-        <Intro />
-        <Intro />
         <Intro />
       </div>
     </>
