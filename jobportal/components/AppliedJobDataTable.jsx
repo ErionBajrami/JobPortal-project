@@ -2,7 +2,6 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react'
 import DataTable from 'react-data-table-component';
 import { useSelector } from 'react-redux';
-import { InfinitySpin } from 'react-loader-spinner'
 
 export default function AppliedJobDataTable() {
     const router = useRouter();
@@ -67,13 +66,7 @@ export default function AppliedJobDataTable() {
 
     return (
         <>
-            {
-                filteredData?.length === 0 ?
-                    <div className='bg-gray w-full h-screen flex items-center flex-col justify-center'>
-                        <InfinitySpin width='200' color="#4f46e5" />
-                        <p className='text-xs uppercase'>Loading Resources Hold Tight...</p>
-                    </div>
-                    : (
+            
                         <DataTable
                             subHeaderAlign={"right"}
                             columns={columns}
@@ -95,8 +88,7 @@ export default function AppliedJobDataTable() {
                             }
                             className="h-screen bg-white"
                         />
-                    )
-            }
+                   
 
         </>
     )

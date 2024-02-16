@@ -13,7 +13,7 @@ export default async (req, res) => {
     if(!id) return res.status(400).json({ success: false, message: "Please Login" })
 
     try {
-        const gettingjobs = await Job.findById(id).populate('user');
+        const gettingjobs = await Job.find({user : id}).populate('user', 'name email');
         return res.status(200).json({ success: true, data: gettingjobs })
     } catch (error) {
         console.log('Error in getting a specifed Job job (server) => ', error);

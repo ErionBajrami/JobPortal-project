@@ -2,9 +2,17 @@
 # https://job-portal-teal.vercel.app
 
 
-## Authors
 
-- [Abdullah Moiz](https://www.github.com/Abdullah-moiz)
+## Features
+
+- SignIn / SignUp
+- Forget Password
+- Post A Job
+- View  All Jobs
+- View Details of Any Job
+- BookMark Jobs
+- Track Your BookMark Jobs in DataTable View
+- Track Your Applied Jobs in DataTable View 
 
 
 
@@ -30,6 +38,8 @@ Install my-project with npm
   npm run preview (To View Production Server )
 ```
     
+    
+
 
 ## 🛠 Tools
 

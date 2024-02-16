@@ -3,7 +3,7 @@ import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 import { GoLocation } from 'react-icons/go'
 import { MdCategory, MdEmail } from 'react-icons/md'
-import { BsBriefcaseFill } from 'react-icons/bs'
+import { BsBriefcaseFill, BsFillBookmarkCheckFill } from 'react-icons/bs'
 import { AiOutlineArrowRight, AiOutlineDollarCircle } from 'react-icons/ai'
 import { RiUserSearchFill } from 'react-icons/ri'
 import { BsFillCalendar2DateFill } from 'react-icons/bs'
@@ -16,6 +16,7 @@ import { get_specified_job } from '@/Services/job'
 import { toast, ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css';
 import { InfinitySpin } from 'react-loader-spinner'
+import { book_mark_job } from '@/Services/job/bookmark'
 
 
 
@@ -47,8 +48,9 @@ export default function JobDetails() {
     useEffect(() => {
         if (JobDetails) {
 
-            const filteredJobData = JobData.filter((job) => job.job_category === JobDetails?.job_category)
-            dispatch(setMatchingJobDat(filteredJobData))
+            const filteredJobData = JobData?.filter((job) => job.job_category === JobDetails?.job_category)
+            const filteredJobData2 = filteredJobData?.filter((job) => job._id !== JobDetails?._id)
+            dispatch(setMatchingJobDat(filteredJobData2))
 
         }
     }, [JobDetails, JobData, dispatch])
@@ -60,15 +62,29 @@ export default function JobDetails() {
     }
 
 
+    const handleBookMark = async () =>  {
+
+        if (!user) return toast.error('Please Login First');
+
+        const data = {user : user?._id , job : JobDetails?._id}
+        const res = await book_mark_job(data);
+        if(res.success) {
+           return toast.success(res.message)
+        }
+        else {
+            return toast.error(res.message)
+        }
+
+    }
 
     return (
         <>
             {
                 JobDetails === null || JobDetails === undefined ? (
                     <div className='bg-gray w-full h-screen flex items-center flex-col justify-center'>
-                    <InfinitySpin width='200' color="#4f46e5" />
-                    <p className='text-xs uppercase'>Loading Resources Hold Tight...</p>
-                </div>
+                        <InfinitySpin width='200' color="#4f46e5" />
+                        <p className='text-xs uppercase'>Loading Resources Hold Tight...</p>
+                    </div>
                 ) : (
                     <>
                         <ToastContainer />
@@ -124,7 +140,16 @@ export default function JobDetails() {
                                         </div>
                                     </div>
                                     <div className='flex items-center justify-center'>
-                                        <button onClick={handleApply} className='md:px-6 md:py-3 px-3 py-2 mt-2 md:mt-0 bg-indigo-500 rounded text-base tracking-widest uppercase transition-all duration-700 hover:bg-indigo-900 text-white  '>Apply Position</button>
+                                        {
+                                            JobDetails?.user?.email === user?.email ? (
+                                                <p className='text-xs text-red-500'>unable Apply to your Own jobs</p>
+                                            ) : (
+                                                <div className='flex items-center justify-center  '>
+                                                    <BsFillBookmarkCheckFill onClick={handleBookMark} className='text-indigo-600 text-4xl cursor-pointer  mx-2'/>
+                                                    <button onClick={handleApply} className='md:px-6 md:py-3 px-3 py-2 mt-2 md:mt-0 bg-indigo-500 rounded text-base tracking-widest uppercase transition-all duration-700 hover:bg-indigo-900 text-white  '>Apply Position</button>
+                                                </div>
+                                            )
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +181,16 @@ export default function JobDetails() {
                                 <h1 className='text-xl font-semibold lg:text-2xl '>Related Jobs</h1>
                                 <div className='md:px-8 px-2 md:mx-4 flex flex-wrap items-center justify-center'>
                                     {/* card */}
+
                                     {
+                                        machingData?.length === 0 ? (
+                                            <>
+                                                <div className='md:w-96 w-full py-3 mx-4 my-2 flex items-center md:items-start px-6 justify-start md:justify-center flex-col rounded bg-gray-50'>
+                                                    <p  className='text-xs font-semibold text-red-600 uppercase'>No Other similar Jobs Available ...</p>
+                                                </div>
+
+                                            </> 
+                                        ) : (
                                         machingData?.map((item) => {
                                             return (
                                                 <div key={item?._id} className='md:w-96 w-full py-3 mx-4 my-2 flex items-center md:items-start px-6 justify-start md:justify-center flex-col rounded bg-gray-50'>
@@ -189,10 +223,11 @@ export default function JobDetails() {
                                                             <p className=' text-xs text-gray-800 mx-1'>{new Date(`${item?.job_deadline}`).toLocaleDateString('en-GB')}</p>
                                                         </div>
                                                     </div>
-                                                    <button onClick={handleApply} className='my-2 py-2 px-4  border border-indigo-600 uppercase  rounded flex items-center justify-center transition-all duration-700 hover:bg-indigo-600 hover:text-white text-indigo-600 font-semibold'>Apply Now <AiOutlineArrowRight className='mx-2 text-xl' /></button>
+                                                    <button onClick={() => router.push(`/frontend/jobDetails/${item?._id}`)} className='my-2 py-2 px-4  border border-indigo-600 uppercase  rounded flex items-center justify-center transition-all duration-700 hover:bg-indigo-600 hover:text-white text-indigo-600 font-semibold'>View Detail<AiOutlineArrowRight className='mx-2 text-xl' /></button>
                                                 </div>
                                             )
                                         })
+                                        )
                                     }
 
                                     {/* card */}
